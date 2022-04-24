@@ -1,6 +1,12 @@
 # CalculatorApp
 
-Calculator App made with Flutter for the Web-Based Mobile Application course at Petra Christian University.
+Calculator App made with **Flutter** for the Web-Based Mobile Application course at Petra Christian University made by Calvert Tanudihardjo, **NRP:** C14190033
+
+## Setup
+Run this command on this repository directory
+```power-shell
+flutter build appbundle --target-platform android-arm,android-arm64
+```
 
 ## Preview
 
