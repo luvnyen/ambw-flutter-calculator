@@ -37,6 +37,16 @@ class _HistoryState extends State<History> {
                   color: darkMode ? colorLight : colorDark,
                 ),
               ),
+              const SizedBox(height: 10),
+              Text(
+                'swipe right calculation to delete',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: darkMode ? colorLight : colorDark,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
               Expanded(
                 child: widget.history.isEmpty
                     ? const Center(
@@ -52,24 +62,85 @@ class _HistoryState extends State<History> {
                         shrinkWrap: true,
                         itemCount: widget.history.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                              widget.history.keys.elementAt(index),
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: darkMode ? colorLight : colorDark,
+                          return Dismissible(
+                            key: Key(widget.history.keys.elementAt(index)),
+                            confirmDismiss: (direction) async {
+                              if (direction == DismissDirection.endToStart) {
+                                return showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text(
+                                          'Delete calculation result?'),
+                                      content: Text(
+                                          '${widget.history.keys.elementAt(index)}=${widget.history.values.elementAt(index)}'),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            primary: Colors.grey,
+                                          ),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            primary: Colors.redAccent,
+                                          ),
+                                          child: const Text('Delete'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                              return null;
+                            },
+                            onDismissed: (direction) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Deleted ${widget.history.keys.elementAt(index)}=${widget.history.values.elementAt(index)}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  action: SnackBarAction(
+                                    label: 'CLOSE',
+                                    textColor: Colors.white,
+                                    onPressed: () {},
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                              setState(() {
+                                widget.history.remove(
+                                    widget.history.keys.elementAt(index));
+                              });
+                            },
+                            child: ListTile(
+                              title: Text(
+                                widget.history.keys.elementAt(index),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: darkMode ? colorLight : colorDark,
+                                ),
+                                textAlign: TextAlign.right,
                               ),
-                              textAlign: TextAlign.right,
-                            ),
-                            subtitle: Text(
-                              '=${widget.history.values.elementAt(index)}',
-                              style: TextStyle(
-                                fontSize: 25,
-                                color: darkMode
-                                    ? Colors.greenAccent
-                                    : Colors.redAccent,
+                              subtitle: Text(
+                                '=${widget.history.values.elementAt(index)}',
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  color: darkMode
+                                      ? Colors.greenAccent
+                                      : Colors.redAccent,
+                                ),
+                                textAlign: TextAlign.right,
                               ),
-                              textAlign: TextAlign.right,
                             ),
                           );
                         },
